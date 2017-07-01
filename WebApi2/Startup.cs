@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using WebApi2.Models;
 
 namespace WebApi2
 {
@@ -29,6 +31,9 @@ namespace WebApi2
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddDbContext<Context>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Context")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,25 +41,8 @@ namespace WebApi2
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            app.UseStaticFiles();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
+            
         }
     }
 }
